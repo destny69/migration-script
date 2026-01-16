@@ -1,0 +1,27 @@
+server {
+    server_name {{ domain_name }};
+    root {{ app_path_for_nginx_config }};
+
+    client_max_body_size 5G;
+
+    index index.php index.html;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    error_log /var/log/nginx/{{ app_name }}-error.log;
+    access_log /var/log/nginx/{{ app_name }}-access.log;
+
+}

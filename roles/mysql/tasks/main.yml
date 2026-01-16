@@ -1,0 +1,62 @@
+
+- name: Taking backup of mysql database
+  mysql_db:
+    name: "{{ src_mysql_database }}"
+    state: dump
+    target: "/tmp/{{ src_mysql_database }}_backup.sql"
+    login_user: "{{ mysql_user_src }}"
+    login_password: "{{ mysql_password_src }}"
+  become: yes
+  become_user: root
+  delegate_to: src_server
+
+
+- name: Copy mysql database backup to destination server
+  synchronize:
+    src: "/tmp/{{ src_mysql_database }}_backup.sql"
+    dest: "/tmp/{{ dest_mysql_database }}_backup.sql"
+    mode: push
+    rsync_opts:
+      - "--rsync-path='sudo rsync'"
+  delegate_to: src_server
+  become: yes
+  become_user: root
+
+- name: Creating mysql database on destination server
+  mysql_db:
+    name: "{{ dest_mysql_database }}"
+    state: present
+    login_user: "{{ mysql_user_dest_root }}"
+    login_password: "{{ mysql_password_dest_root }}"
+  become: yes
+  become_user: root
+
+- name: Creating MySQL user on destination server
+  mysql_user:
+    name: "{{ mysql_user_dest }}"
+    password: "{{ mysql_password_dest }}"
+    host: "%"
+    priv: "{{ dest_mysql_database }}.*:ALL,GRANT"
+    state: present
+    login_user: "{{ mysql_user_dest_root }}"
+    login_password: "{{ mysql_password_dest_root }}"   
+  become: yes
+  become_user: root
+
+
+- name: Restore mysql database on destination server
+  mysql_db:
+    name: "{{ dest_mysql_database }}"
+    state: import
+    target: "/tmp/{{ dest_mysql_database }}_backup.sql"
+    login_user: "{{ mysql_user_dest }}"
+    login_password: "{{ mysql_password_dest }}"
+  become: yes
+  become_user: root 
+
+- name: Remove mysql database backup from destination server
+  file:
+    path: "/tmp/{{ dest_mysql_database }}_backup.sql"
+    state: absent
+  become: yes
+  become_user: root

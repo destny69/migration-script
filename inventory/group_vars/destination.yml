@@ -1,0 +1,19 @@
+dest_app_path: /var/www/html/
+src_app_path: /var/www/html/jobdev/
+app_name: jobbicus-dev
+src_mysql_database: jobbicus_dev
+dest_mysql_database: jobbicus_dev
+
+mysql_user_src: root
+mysql_password_src: xyz@123
+
+domain_name: jobbicus.dev
+
+mysql_user_dest_root: root
+mysql_password_dest_root: xyz@123
+
+
+mysql_user_dest: jobbicus_user
+mysql_password_dest: jobbicus_pass
+
+app_path_for_nginx_config: /var/www/html/jobdev/
