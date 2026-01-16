@@ -17,3 +17,5 @@ mysql_user_dest: jobbicus_user
 mysql_password_dest: jobbicus_pass
 
 app_path_for_nginx_config: /var/www/html/jobdev/
+
+

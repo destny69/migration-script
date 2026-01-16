@@ -16,6 +16,7 @@
     src: "/tmp/{{ src_mysql_database }}_backup.sql"
     dest: "/tmp/{{ dest_mysql_database }}_backup.sql"
     mode: push
+    dest_port: "{{ destination_server_port | int }}"
     rsync_opts:
       - "--rsync-path='sudo rsync'"
   delegate_to: src_server

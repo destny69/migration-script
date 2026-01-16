@@ -9,6 +9,7 @@
       src: "{{ src_app_path }}"
       dest: "{{ dest_app_path}}"
       mode: push
+      dest_port: "{{ destination_server_port | int }}"
       rsync_opts:
         - "--rsync-path='sudo rsync'"
     delegate_to: src_server
